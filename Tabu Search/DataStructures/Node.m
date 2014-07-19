@@ -1,31 +1,22 @@
 %% Node
 %  Will either be a junction or a station
 
-%% System and how it will work
-% - A train will start at a station with a desired departure time
-% - Each train will be removed from the ordered list and sent to the next
-%   node while updating their delay if they left later than their arrival
-%   times
-% - This is done for every train in the current node until the node is
-%   empty and then we progress to the next node and do the same
-
-classdef Node < handle
-    enumeration
-       STATION, JUNCTION 
-    end
-    
+classdef Node < handle    
     properties
         type; % junction or station
         leftTrackSegments = [];
         rightTrackSegments = [];
-        waitingTrains = [];
+        waitingTrains = TrainLinkedList.empty;
+        STATION = 0;
+        JUNCTION = 1;
     end
     
     methods
         % Constructor
         function node = Node(type)
             if nargin > 0
-               node.type = type; 
+               node.type = type;
+               node.waitingTrains = TrainLinkedList();
             end
         end
         
@@ -37,14 +28,17 @@ classdef Node < handle
             node.rightTrackSegments = [node.rightTrackSegments, trackSegment];
         end
         
-        function addWaitingTrain(node, train)
-            %% TODO: Change this to an ordered linked list
-           node.waitingTrains = [node.waitingTrains, train]; 
+        function addWaitingTrain(node, train, arrivalTime)
+            train.setNodeArrivalTime(arrivalTime);
+            node.waitingTrains.insert(train);
         end
         
-        function [train] = getNextTrain(node) %% This is what tabu search will modify
-            %% TODO = Make this an ordered list of trains in order of most
-            %% delay seen to least delay seen
+        function trackSegment = getNextTrackSegment(node) %% TS will also modify this
+            
+        end
+        
+        function train = getNextTrain(node) %% This is what tabu search will modify
+            train = node.waitingTrains.pop();
         end
     end
     
