@@ -1,42 +1,46 @@
 %% Train
 classdef Train < handle
    properties
-       departureStation;
-       arrivalStation;
+       destinationStation;
        direction;
        initialDepartureTime = 0;
        finalArrivalTime = 0;
-       optimalTravelTime = 0;
        nodeArrivalTime = 0; % Updated for every node that a train hits
+       curNode;
+       id;
    end
     
    methods
        % Constructor
-       function train = Train(direction, arrivalStation)
+       function train = Train(id, direction, desiredDepartureTime, departureStation, destinationStation)
           if nargin > 0
              train.direction = direction;
-             train.arrivalStation = arrivalStation;
+             train.destinationStation = destinationStation;
+             train.id = id;
+             train.curNode = departureStation;
+             train.nodeArrivalTime = desiredDepartureTime;
           end
        end
        
-       function addDelay(train, delay)
-          train.delay = train.delay + delay; 
+       function id = getId(train)
+          id = train.id; 
        end
-
-       function delay = getDelay(train)
-           delay = train.delay;
+       
+       function currentNode = getCurrentNode(train)
+          currentNode = train.curNode; 
+       end
+       
+       function setCurrentNode(train, node, time)
+          train.curNode = node;
+          train.nodeArrivalTime = time;
        end
        
        function direction = getDirection(train)
           direction = train.direction; 
        end
        
-       function arrivalStation = getArrivalStation(train)
-           arrivalStation = train.arrivalStation;
-       end
-       
-       function setNodeArrivalTime(train, time)
-          train.nodeArrivalTime = time; 
+       function destinationStation = getDestinationStation(train)
+           destinationStation = train.destinationStation;
        end
        
        function nodeArrivalTime = getNodeArrivalTime(train)

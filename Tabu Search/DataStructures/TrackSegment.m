@@ -7,6 +7,8 @@ classdef TrackSegment < handle
         busyUntil = 0; % Represents the next time when the track segment will be free
         leftNode = Node.empty;
         rightNode = Node.empty;
+        LEFT = 0;
+        RIGHT = 1;
     end
     
     methods
@@ -33,6 +35,18 @@ classdef TrackSegment < handle
         
         function leftNode = getLeftNode(trackSegment)
             leftNode = trackSegment.leftNode;
+        end
+        
+        function length = getLength(trackSegment)
+            length = trackSegment.length;
+        end
+        
+        function node = getNode(trackSegment, direction)
+            if (direction == trackSegment.LEFT)
+                node = trackSegment.leftNode;
+            else
+                node = trackSegment.rightNode;
+            end
         end
     end
     

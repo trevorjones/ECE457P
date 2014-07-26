@@ -32,7 +32,8 @@ rs.addTrackSegment(junction3, junction4, 1);
 rs.addTrackSegment(junction4, station3, 1);
 
 % Add trains
-train1 = rs.createTrain(0, station1, station3, RIGHT);
+train1 = rs.createTrain(1, station1, station3, RIGHT);
+train2 = rs.createTrain(3, station2, station1, LEFT);
 
 % Simulate
-rs.simulate()
+rs.genIdealSolution()

@@ -7,17 +7,22 @@ classdef RailwaySystem < handle
        trains = [];
        LEFT = 0;
        RIGHT = 1;
+       timeOrderedTrains = TrainLinkedList.empty;
    end
    
    methods
        function railwaySystem = RailwaySystem()
-           
+          if (nargin > 0)
+            railwaySystem.timeOrderedTrains = TrainLinkedList();
+          end
        end
        
        function nodeId = createNode(railwaySystem, type)
-          node = Node(type);
+          [m, nodeId] = size(railwaySystem.nodes);
+          nodeId = nodeId+1;
+          
+          node = Node(nodeId, type);
           railwaySystem.nodes = [railwaySystem.nodes, node];
-          [m, nodeId] = size(railwaySystem.nodes);           
        end
        
        function addTrackSegment(railwaySystem, leftNodeId, rightNodeId, trackSegmentLength)
@@ -29,16 +34,50 @@ classdef RailwaySystem < handle
        end
        
        function trainId = createTrain(railwaySystem, desiredDepartureTime, departureStationId, arrivalStationId, direction)
-           train = Train(direction, arrivalStationId);
-           railwaySystem.trains = [railwaySystem.trains, train];
            [m, trainId] = size(railwaySystem.trains);
+           trainId = trainId+1;
            
-           % Add to starting station
-           addTrainToNode(railwaySystem, train, departureStationId, desiredDepartureTime);
+           arrivalStation = railwaySystem.nodes(arrivalStationId);
+           departureStation = railwaySystem.nodes(departureStationId);
+           train = Train(trainId, direction, desiredDepartureTime, departureStation, arrivalStation);
+           railwaySystem.trains = [railwaySystem.trains, train];
        end
        
-       function addTrainToNode(railwaySystem, train, stationId, arrivalTime)
-           railwaySystem.nodes(stationId).addWaitingTrain(train, arrivalTime);
+       %% Solution generation
+       %  Returns a matrix of nodes(columns) x trains(rows) and each spot is the time at
+       %  which the train arrives at that node.
+       %  !! When doing tabu search, only swap trains that arrive at a node
+       %  at the same time
+       function [idealSolution] = genIdealSolution(railwaySystem)
+          [m, nTrains] = size(railwaySystem.trains);
+          [n, nNodes] = size(railwaySystem.nodes);
+          idealSolution = zeros(nTrains, nNodes);
+          
+          for i = 1:nTrains
+              train = railwaySystem.trains(i);
+              node = train.getCurrentNode();
+              direction = train.getDirection();
+              
+              % Update initial departure time
+              time = train.getNodeArrivalTime();
+              nodeId = node.getId();
+              idealSolution(i + nTrains*(nodeId-1)) = time;
+              
+              while (node ~= train.getDestinationStation())
+                % Get track segment to take
+                ts = node.getShortestTrackSegment(direction);
+                node = ts.getNode(direction);
+                
+                % Calculate time it will take to travel it and update
+                % matrix
+                time = time + ts.getLength();
+                nodeId = node.getId();
+                idealSolution(i + nTrains*(nodeId-1)) = time;
+                
+                % Move to next node
+                train.setCurrentNode(node, time);
+              end
+          end
        end
        
        function averageTrainDelay = simulate(railwaySystem)
@@ -52,7 +91,7 @@ classdef RailwaySystem < handle
           averageTrainDelay = 0;
           [m, length] = size(railwaySystem.nodes);
           
-          for i = 0:length
+          for i = 1:length
               
           end
           
