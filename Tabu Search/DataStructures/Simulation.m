@@ -1,5 +1,6 @@
 %% Simulation
 %  Following the Figure 9.1 from http://www.eecs.harvard.edu/~parkes/pubs/ch9.pdf
+clearvars
 
 rs = RailwaySystem();
 LEFT = 0;
@@ -34,6 +35,11 @@ rs.addTrackSegment(junction4, station3, 1);
 % Add trains
 train1 = rs.createTrain(1, station1, station3, RIGHT);
 train2 = rs.createTrain(3, station2, station1, LEFT);
+train3 = rs.createTrain(3, station2, station1, LEFT);
 
 % Simulate
-rs.genIdealSolution()
+IdealSolution = rs.genIdealSolution()
+rs.reset();
+[InitialSolution, lateness] = rs.getInitialSolution();
+InitialSolution
+lateness

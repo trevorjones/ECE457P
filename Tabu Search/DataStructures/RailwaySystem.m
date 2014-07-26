@@ -12,9 +12,7 @@ classdef RailwaySystem < handle
    
    methods
        function railwaySystem = RailwaySystem()
-          if (nargin > 0)
-            railwaySystem.timeOrderedTrains = TrainLinkedList();
-          end
+          railwaySystem.timeOrderedTrains = TrainLinkedList();
        end
        
        function nodeId = createNode(railwaySystem, type)
@@ -34,12 +32,12 @@ classdef RailwaySystem < handle
        end
        
        function trainId = createTrain(railwaySystem, desiredDepartureTime, departureStationId, arrivalStationId, direction)
-           [m, trainId] = size(railwaySystem.trains);
-           trainId = trainId+1;
+           trainId = railwaySystem.timeOrderedTrains.getSize()+1;
            
            arrivalStation = railwaySystem.nodes(arrivalStationId);
            departureStation = railwaySystem.nodes(departureStationId);
            train = Train(trainId, direction, desiredDepartureTime, departureStation, arrivalStation);
+           railwaySystem.timeOrderedTrains.insert(train);
            railwaySystem.trains = [railwaySystem.trains, train];
        end
        
@@ -49,52 +47,101 @@ classdef RailwaySystem < handle
        %  !! When doing tabu search, only swap trains that arrive at a node
        %  at the same time
        function [idealSolution] = genIdealSolution(railwaySystem)
-          [m, nTrains] = size(railwaySystem.trains);
-          [n, nNodes] = size(railwaySystem.nodes);
-          idealSolution = zeros(nTrains, nNodes);
+          nTrains = railwaySystem.timeOrderedTrains.getSize();
+          idealSolution = railwaySystem.genSolutionWithDepartureTimes();
+          trainNode = railwaySystem.timeOrderedTrains.getHead();
           
-          for i = 1:nTrains
-              train = railwaySystem.trains(i);
+          while ~isempty(trainNode)
+              train = trainNode.getTrain();
+              i = train.getId();
               node = train.getCurrentNode();
-              direction = train.getDirection();
+              
+              while (node ~= train.getDestinationStation())                
+                % Calculate time it will take to travel it and update
+                % matrix
+                time = train.getCurrentNode().moveTrainToNextNodeOnNextAvailableTrackSegment(train, 1);
+                node = train.getCurrentNode();
+                nodeId = node.getId();
+                train.setIdealTime(time);
+                idealSolution(i + nTrains*(nodeId-1)) = time;
+              end
+              
+              trainNode = trainNode.getNext();
+          end
+       end
+       
+       function [solution] = genSolutionWithDepartureTimes(railwaySystem)
+           nTrains = railwaySystem.timeOrderedTrains.getSize();
+           [n, nNodes] = size(railwaySystem.nodes);
+           solution = zeros(nTrains, nNodes);
+           trainNode = railwaySystem.timeOrderedTrains.getHead();
+           
+           while ~isempty(trainNode)
+              train = trainNode.getTrain();
+              i = train.getId();
+              node = train.getCurrentNode();
               
               % Update initial departure time
               time = train.getNodeArrivalTime();
               nodeId = node.getId();
-              idealSolution(i + nTrains*(nodeId-1)) = time;
+              solution(i + nTrains*(nodeId-1)) = time;
               
-              while (node ~= train.getDestinationStation())
-                % Get track segment to take
-                ts = node.getShortestTrackSegment(direction);
-                node = ts.getNode(direction);
-                
-                % Calculate time it will take to travel it and update
-                % matrix
-                time = time + ts.getLength();
-                nodeId = node.getId();
-                idealSolution(i + nTrains*(nodeId-1)) = time;
-                
-                % Move to next node
-                train.setCurrentNode(node, time);
-              end
-          end
+              train.setCurrentNode(node, time);
+              trainNode = trainNode.getNext();
+           end
        end
        
-       function averageTrainDelay = simulate(railwaySystem)
-          %% System and how it will work
-          % - A train will start at a station with a desired departure time
-          % - Each train will be removed from the ordered list and sent to the next
-          %   node while updating their delay if they left later than their arrival
-          %   times
-          % - This is done for every train in the current node until the node is
-          %   empty and then we progress to the next node and do the same 
-          averageTrainDelay = 0;
-          [m, length] = size(railwaySystem.nodes);
-          
-          for i = 1:length
-              
-          end
-          
+       function reset(railwaySystem)
+           % Reset all trains to initial station and time
+           [m, nTrains] = size(railwaySystem.trains);
+           railwaySystem.timeOrderedTrains = TrainLinkedList();
+           
+           for i = 1:nTrains
+               train = railwaySystem.trains(i);
+               train.setCurrentNode(train.getInitialNode(), train.getInitialDepartureTime());
+               railwaySystem.timeOrderedTrains.insert(train);
+           end
+           
+           % Reset all track segment busy times
+           [m, nNodes] = size(railwaySystem.nodes);
+           for i = 1:nNodes
+               railwaySystem.nodes(i).reset();
+           end
        end
+       
+       function [initialSolution, lateness] = getInitialSolution(railwaySystem)
+           nTrains = railwaySystem.timeOrderedTrains.getSize();
+           initialSolution = railwaySystem.genSolutionWithDepartureTimes();
+           list = railwaySystem.timeOrderedTrains;
+           trainNode = list.pop();           
+           
+           while ~isempty(trainNode)
+               train = trainNode.getTrain(); % Shouldn't change the initial list               
+               node = train.getCurrentNode();
+               
+               if (node ~= train.getDestinationStation())
+                   time = node.moveTrainToNextNodeOnNextAvailableTrackSegment(train, 0);
+                   i = train.getId();
+                   node = train.getCurrentNode();
+                   nodeId = node.getId();
+                   initialSolution(i + nTrains*(nodeId-1)) = time;
+                   list.insert(train);
+               end
+               
+               trainNode = list.pop();
+           end
+           
+           lateness = calcLateness(railwaySystem);
+       end
+       
+       function lateness = calcLateness(railwaySystem)
+           lateness = 0;
+           [m, nTrains] = size(railwaySystem.trains);
+           
+           for i = 1:nTrains
+               train = railwaySystem.trains(i);
+               lateness = lateness + train.getNodeArrivalTime() - train.getIdealTime();
+           end
+       end      
    end
 end

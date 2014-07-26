@@ -21,8 +21,9 @@ classdef TrackSegment < handle
             end
         end
         
-        function assignTrain(trackSegment, currentTime)
-           trackSegment.busyUntil = currentTime + trackSegment.length;
+        function time = assignTrain(trackSegment, currentTime)
+           time = currentTime + trackSegment.length;
+           trackSegment.busyUntil = time;
         end
         
         function busyUntil = getBusyUntil(trackSegment)
@@ -47,6 +48,10 @@ classdef TrackSegment < handle
             else
                 node = trackSegment.rightNode;
             end
+        end
+        
+        function reset(trackSegment)
+            trackSegment.busyUntil = 0;
         end
     end
     

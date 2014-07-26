@@ -26,6 +26,14 @@ classdef Node < handle
            id = node.id; 
         end
         
+        function reset(node)
+            [n, mTS] = size(node.rightTrackSegments);
+            for i = 1:mTS
+                ts = node.rightTrackSegments(i);
+                ts.reset();
+            end
+        end
+        
         function addLeftTrackSegment(node, trackSegment)
             node.leftTrackSegments = [node.leftTrackSegments, trackSegment];
         end
@@ -34,8 +42,11 @@ classdef Node < handle
             node.rightTrackSegments = [node.rightTrackSegments, trackSegment];
         end
         
-        function ts = getShortestTrackSegment(node, direction)
+        function time = moveTrainToNextNodeOnNextAvailableTrackSegment(node, train, ideal)
+            % Get track segment to take
             ts = TrackSegment.empty;
+            time = train.getNodeArrivalTime();
+            direction = train.getDirection();
             
             if (direction == node.LEFT)
                list = node.leftTrackSegments;
@@ -45,10 +56,21 @@ classdef Node < handle
             
             [m, length] = size(list);
             for i = 1:length
-                if (isempty(ts) || ts.getLength() > list(i).getLength())
+                if (isempty(ts) || ts.getBusyUntil() > list(i).getBusyUntil())                    
                     ts = list(i);
                 end
             end
+            
+            % Assign train to track segment
+            if (ideal == 0 && time < ts.getBusyUntil())
+                time = ts.getBusyUntil();
+            end
+            
+            time = ts.assignTrain(time);
+            node2 = ts.getNode(direction);
+            
+            % Move to next node
+            train.setCurrentNode(node2, time);
         end
     end
     

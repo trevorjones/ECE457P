@@ -4,8 +4,10 @@ classdef Train < handle
        destinationStation;
        direction;
        initialDepartureTime = 0;
+       initialDepartureNode;
        finalArrivalTime = 0;
-       nodeArrivalTime = 0; % Updated for every node that a train hits
+       nodeArrivalTime = 0;
+       idealTime;
        curNode;
        id;
    end
@@ -19,6 +21,8 @@ classdef Train < handle
              train.id = id;
              train.curNode = departureStation;
              train.nodeArrivalTime = desiredDepartureTime;
+             train.initialDepartureNode = departureStation;
+             train.initialDepartureTime = desiredDepartureTime;
           end
        end
        
@@ -45,6 +49,22 @@ classdef Train < handle
        
        function nodeArrivalTime = getNodeArrivalTime(train)
            nodeArrivalTime = train.nodeArrivalTime;
+       end
+       
+       function initialNode = getInitialNode(train)
+           initialNode = train.initialDepartureNode;
+       end
+       
+       function initialDepartureTime = getInitialDepartureTime(train)
+           initialDepartureTime = train.initialDepartureTime;
+       end
+       
+       function setIdealTime(train, time)
+           train.idealTime = time;
+       end
+       
+       function time = getIdealTime(train)
+           time = train.idealTime;
        end
    end
 end
