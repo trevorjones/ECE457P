@@ -41,11 +41,12 @@ IdealSolution = rs.genIdealSolution();
 
 % Generate the initial solution given the problem data
 rs.reset();
-[InitialSolution, lateness] = rs.getSolution();
+[InitialSolution, conflicts, lateness] = rs.getSolution();
 
 % Set the best solution to the initial solution
 BestSoln = InitialSolution;
 BestSolnCost = lateness;
+BestSolnConflicts = conflicts;
 
 for nIt = 1 : NumIterations
     
