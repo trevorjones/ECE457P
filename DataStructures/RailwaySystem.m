@@ -109,7 +109,7 @@ classdef RailwaySystem < handle
            end
        end
        
-       function [initialSolution, lateness] = getSolution(railwaySystem)
+       function [initialSolution, conflicts, lateness] = getSolution(railwaySystem)
            nTrains = railwaySystem.timeOrderedTrains.getSize();
            initialSolution = railwaySystem.genSolutionWithDepartureTimes();
            list = railwaySystem.timeOrderedTrains;
@@ -137,6 +137,7 @@ classdef RailwaySystem < handle
                trainNode = list.pop();
            end
            
+           conflicts = railwaySystem.getConflicts(initialSolution);
            lateness = calcLateness(railwaySystem);
        end
        
@@ -150,13 +151,52 @@ classdef RailwaySystem < handle
            end
        end     
        
-       function [solution, lateness] = genSolutionWithDelay(railwaySystem, delay)
+       function conflicts = getConflicts(railwaySystem, solution)
+           [m, nTrains] = size(railwaySystem.trains);
+           [n, nNodes] = size(railwaySystem.nodes);
+           conflicts = zeros(nTrains, nNodes);
+           
+           for i = 1:nNodes
+               % Case 1 : trains going in the same direction leaving from the
+               % same station
+               A = solution(:,i);
+               [n, bin] = histc(A, unique(nonzeros(A)));
+               multiple = find(n > 1);
+               index = find(ismember(bin, multiple));
+               index = index + nTrains*(i-1);
+               conflicts(index) = 1;
+               
+               % Case 2 : Trains going in opposite directions. If current train
+               % going left, check column to the left for matching times and
+               % trains going to the right. Vice verse for the opposite
+               if (i < nNodes)
+                   B = solution(:,i+1);
+                   
+                   for j = 1:nTrains
+                       C = B / A(j);
+                       index = find(C == 1);
+                       
+                       if (~isempty(index))
+                           for k = 1:numel(index)
+                               id = index(k);
+                               if (railwaySystem.trains(j).getDirection() ~= railwaySystem.trains(id).getDirection())
+                                   conflicts(j + nTrains*(i-1)) = 1;
+                                   conflicts(id + nTrains*(i)) = 1;
+                               end
+                           end
+                       end
+                   end
+               end
+           end
+       end
+       
+       function [solution, conflicts, lateness] = genSolutionWithDelay(railwaySystem, delay)
            [m, nNodes] = size(railwaySystem.nodes);
            for i = 1:nNodes
                railwaySystem.nodes(i).setDelay(delay(:,i));
            end
            
-           [solution, lateness] = railwaySystem.getSolution();
+           [solution, conflicts, lateness] = railwaySystem.getSolution();
        end
    end
 end

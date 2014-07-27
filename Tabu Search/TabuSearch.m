@@ -1,36 +1,54 @@
-function  [BestSoln BestSolnCost] = TabuSearch( ...
-                ProbData, TabuLength, NumIterations, ...      
-                GenInitialSolnFn, GetBestNeighbourSolnFn)
+function  [BestSoln BestSolnCost] = TabuSearch(TabuLength, NumIterations)
+clearvars
 
-% This function implements the tabu search algorithm.
-%
-% Inputs:
-%   ProbData: The data of the problem to be solved.
-%   TabuLength: The length of the tabu list
-%   NumIterations: The maximum number of iterations
-%   GenInitialSolnFn: A handle to a function that generates an initial
-%                     solution to the problem.
-%   GetBestNeighbourSolnFn: A hanlde to a function that generates the 
-%                         neighbourhood of a given solution and update
-%                         the best neighborhood.
-%
-% Outputs:
-%   BestSoln: The best solution obtained
-%   BestSolnCost: The best solution cost
+rs = RailwaySystem();
+LEFT = 0;
+RIGHT = 1;
+STATION = 0;
+JUNCTION = 1;
+
+% Add junctions and stations
+station1 = rs.createNode(STATION);
+junction1 = rs.createNode(JUNCTION);
+junction2 = rs.createNode(JUNCTION);
+station2 = rs.createNode(STATION);
+junction3 = rs.createNode(JUNCTION);
+junction4 = rs.createNode(JUNCTION);
+station3 = rs.createNode(STATION);
+
+% Add track segments
+rs.addTrackSegment(station1, junction1, 1);
+
+rs.addTrackSegment(junction1, junction2, 1);
+rs.addTrackSegment(junction1, junction2, 1);
+
+rs.addTrackSegment(junction2, station2, 1);
+
+rs.addTrackSegment(station2, junction3, 1);
+
+rs.addTrackSegment(junction3, junction4, 1);
+rs.addTrackSegment(junction3, junction4, 1);
+
+rs.addTrackSegment(junction4, station3, 1);
+
+% Add trains
+train1 = rs.createTrain(1, station1, station3, RIGHT);
+train2 = rs.createTrain(3, station2, station1, LEFT);
+train3 = rs.createTrain(3, station2, station1, LEFT);
+
+% Generate ideal solution for each train which is to be used for the optimization function
+IdealSolution = rs.genIdealSolution();
 
 % Generate the initial solution given the problem data
-[Soln SolnCost TabuList NumEdgePerNode SplitterCosts] = feval(GenInitialSolnFn, ProbData);
+rs.reset();
+[InitialSolution, lateness] = rs.getSolution();
 
 % Set the best solution to the initial solution
-BestSoln = Soln;
-BestSolnCost = SolnCost;
+BestSoln = InitialSolution;
+BestSolnCost = lateness;
 
 for nIt = 1 : NumIterations
-    % Get the best solution in the neighbourhood of the current solution
-    % avoiding Tabu moves
-    [Soln SolnCost TabuList NumEdgePerNode SplitterCosts] = feval(GetBestNeighbourSolnFn, ProbData, ...
-                                Soln, TabuList, TabuLength, BestSolnCost, ... 
-                                NumEdgePerNode, SplitterCosts);
+    
             
     % Update the best solution
     if SolnCost < BestSolnCost

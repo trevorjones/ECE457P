@@ -41,8 +41,9 @@ train3 = rs.createTrain(3, station2, station1, LEFT);
 IdealSolution = rs.genIdealSolution()
 
 rs.reset();
-[InitialSolution, lateness] = rs.getSolution();
+[InitialSolution, conflicts, lateness] = rs.getSolution();
 InitialSolution
+conflicts
 lateness
 
 rs.reset();
@@ -54,6 +55,7 @@ rs.reset();
 delay = [0, 0, 0, 0, 0, 0, 0;
          0, 0, 0, 1, 0, 0, 0;
          0, 0, 0, 2, 0, 0, 0];
-[solution, lateness] = rs.genSolutionWithDelay(delay);
+[solution, conflicts, lateness] = rs.genSolutionWithDelay(delay);
 solution
+conflicts
 lateness
