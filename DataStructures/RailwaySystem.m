@@ -7,6 +7,7 @@ classdef RailwaySystem < handle
        trains = [];
        LEFT = 0;
        RIGHT = 1;
+       conflicts = [];
        timeOrderedTrains = TrainLinkedList.empty;
    end
    
@@ -47,7 +48,10 @@ classdef RailwaySystem < handle
        %  !! When doing tabu search, only swap trains that arrive at a node
        %  at the same time
        function [idealSolution] = genIdealSolution(railwaySystem)
-          nTrains = railwaySystem.timeOrderedTrains.getSize();
+          [m, nTrains] = size(railwaySystem.trains);
+          [n, nNodes] = size(railwaySystem.nodes);
+          railwaySystem.conflicts = zeros(nTrains, nNodes);
+           
           idealSolution = railwaySystem.genSolutionWithDepartureTimes();
           trainNode = railwaySystem.timeOrderedTrains.getHead();
           
@@ -126,7 +130,12 @@ classdef RailwaySystem < handle
                    train.setCurrentNode(node, time);
                    list.insert(train);
                elseif (node ~= train.getDestinationStation())
-                   time = node.moveTrainToNextNodeOnNextAvailableTrackSegment(train, 0);
+                   [time, conflict, lastTrainId, prevNodeId] = node.moveTrainToNextNodeOnNextAvailableTrackSegment(train, 0);
+                   if (conflict == 1)
+                       railwaySystem.conflicts(train.getId(), node.getId()) = 1;
+                       railwaySystem.conflicts(lastTrainId, prevNodeId) = 1;
+                   end
+                   
                    i = train.getId();
                    node = train.getCurrentNode();
                    nodeId = node.getId();
@@ -137,7 +146,7 @@ classdef RailwaySystem < handle
                trainNode = list.pop();
            end
            
-           conflicts = railwaySystem.getConflicts(initialSolution);
+           conflicts = railwaySystem.conflicts;
            lateness = calcLateness(railwaySystem);
        end
        
@@ -148,45 +157,6 @@ classdef RailwaySystem < handle
            for i = 1:nTrains
                train = railwaySystem.trains(i);
                lateness = lateness + train.getNodeArrivalTime() - train.getIdealTime();
-           end
-       end     
-       
-       function conflicts = getConflicts(railwaySystem, solution)
-           [m, nTrains] = size(railwaySystem.trains);
-           [n, nNodes] = size(railwaySystem.nodes);
-           conflicts = zeros(nTrains, nNodes);
-           
-           for i = 1:nNodes
-               % Case 1 : trains going in the same direction leaving from the
-               % same station
-               A = solution(:,i);
-               [n, bin] = histc(A, unique(nonzeros(A)));
-               multiple = find(n > 1);
-               index = find(ismember(bin, multiple));
-               index = index + nTrains*(i-1);
-               conflicts(index) = 1;
-               
-               % Case 2 : Trains going in opposite directions. If current train
-               % going left, check column to the left for matching times and
-               % trains going to the right. Vice verse for the opposite
-               if (i < nNodes)
-                   B = solution(:,i+1);
-                   
-                   for j = 1:nTrains
-                       C = B / A(j);
-                       index = find(C == 1);
-                       
-                       if (~isempty(index))
-                           for k = 1:numel(index)
-                               id = index(k);
-                               if (railwaySystem.trains(j).getDirection() ~= railwaySystem.trains(id).getDirection())
-                                   conflicts(j + nTrains*(i-1)) = 1;
-                                   conflicts(id + nTrains*(i)) = 1;
-                               end
-                           end
-                       end
-                   end
-               end
            end
        end
        

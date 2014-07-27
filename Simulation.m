@@ -1,7 +1,7 @@
 %% Simulation
 %  Following the Figure 9.1 from http://www.eecs.harvard.edu/~parkes/pubs/ch9.pdf
 clearvars
-sc = Scenario();
+sc = SimplifiedScenario();
 rs = sc.getRS();
 
 % Simulate
@@ -19,9 +19,9 @@ rs.reset();
 %  nodes 3 and 4, and you want train 3 to go, then 2, then 1, you must send
 %  the following array to delay train 1 by 2 at station 3, and 1 for train
 %  2 to be delayed by 1 at station 4
-delay = [0, 0, 0, 0, 0, 0, 0;
-         0, 0, 0, 1, 0, 0, 0;
-         0, 0, 0, 2, 0, 0, 0];
+delay = [0, 1, 0, 0;
+         0, 0, 0, 0;
+         0, 0, 0, 1];
 [solution, conflicts, lateness] = rs.genSolutionWithDelay(delay);
 solution
 conflicts

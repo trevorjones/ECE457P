@@ -9,6 +9,7 @@ classdef TrackSegment < handle
         rightNode = Node.empty;
         LEFT = 0;
         RIGHT = 1;
+        lastTrainToGo = Train.empty;
     end
     
     methods
@@ -21,9 +22,10 @@ classdef TrackSegment < handle
             end
         end
         
-        function time = assignTrain(trackSegment, currentTime)
+        function time = assignTrain(trackSegment, train, currentTime)
            time = currentTime + trackSegment.length;
            trackSegment.busyUntil = time;
+           trackSegment.lastTrainToGo = train;
         end
         
         function busyUntil = getBusyUntil(trackSegment)
@@ -52,6 +54,10 @@ classdef TrackSegment < handle
         
         function reset(trackSegment)
             trackSegment.busyUntil = 0;
+        end
+        
+        function train = getLastTrainToGo(ts)
+            train = ts.lastTrainToGo;
         end
     end
     

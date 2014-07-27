@@ -9,6 +9,7 @@ classdef Train < handle
        nodeArrivalTime = 0;
        idealTime;
        curNode;
+       prevNode = Node.empty;
        delay = 0;
        id;
    end
@@ -36,8 +37,13 @@ classdef Train < handle
        end
        
        function setCurrentNode(train, node, time)
+          train.prevNode = train.curNode;
           train.curNode = node;
           train.nodeArrivalTime = time;
+       end
+       
+       function node = getPrevNode(train)
+           node = train.prevNode;
        end
        
        function direction = getDirection(train)

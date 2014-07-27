@@ -44,11 +44,14 @@ classdef Node < handle
             node.rightTrackSegments = [node.rightTrackSegments, trackSegment];
         end
         
-        function time = moveTrainToNextNodeOnNextAvailableTrackSegment(node, train, ideal)
+        function [time, conflict, prevTrainIdWithConflict, prevNodeId] = moveTrainToNextNodeOnNextAvailableTrackSegment(node, train, ideal)
             % Get track segment to take
             ts = TrackSegment.empty;
             time = train.getNodeArrivalTime();
             direction = train.getDirection();
+            conflict = 0;
+            prevTrainIdWithConflict = 0;
+            prevNodeId = 0;
             
             if (direction == node.LEFT)
                list = node.leftTrackSegments;
@@ -66,9 +69,14 @@ classdef Node < handle
             % Assign train to track segment
             if (ideal == 0 && time < ts.getBusyUntil())
                 time = ts.getBusyUntil();
+                % conflict arose if here
+                conflict = 1;
+                prevTrain = ts.getLastTrainToGo();
+                prevTrainIdWithConflict = prevTrain.getId();
+                prevNodeId = prevTrain.getPrevNode().getId();
             end
                        
-            time = ts.assignTrain(time);
+            time = ts.assignTrain(train, time);
             node2 = ts.getNode(direction);
                        
             % Move to next node
