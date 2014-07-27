@@ -9,6 +9,7 @@ classdef Train < handle
        nodeArrivalTime = 0;
        idealTime;
        curNode;
+       delay = 0;
        id;
    end
     
@@ -65,6 +66,14 @@ classdef Train < handle
        
        function time = getIdealTime(train)
            time = train.idealTime;
+       end
+       
+       function setDelay(train, delay)
+           train.delay = delay;
+       end
+       
+       function delay = getDelay(train)
+           delay = train.delay;
        end
    end
 end

@@ -109,17 +109,23 @@ classdef RailwaySystem < handle
            end
        end
        
-       function [initialSolution, lateness] = getInitialSolution(railwaySystem)
+       function [initialSolution, lateness] = getSolution(railwaySystem)
            nTrains = railwaySystem.timeOrderedTrains.getSize();
            initialSolution = railwaySystem.genSolutionWithDepartureTimes();
            list = railwaySystem.timeOrderedTrains;
-           trainNode = list.pop();           
+           trainNode = list.pop();
            
            while ~isempty(trainNode)
                train = trainNode.getTrain(); % Shouldn't change the initial list               
                node = train.getCurrentNode();
                
-               if (node ~= train.getDestinationStation())
+               % Check for delay and re-add to list if there is any
+               delay = node.getTrainDelay(train);
+               if (delay > 0)
+                   time = train.getNodeArrivalTime() + delay;
+                   train.setCurrentNode(node, time);
+                   list.insert(train);
+               elseif (node ~= train.getDestinationStation())
                    time = node.moveTrainToNextNodeOnNextAvailableTrackSegment(train, 0);
                    i = train.getId();
                    node = train.getCurrentNode();
@@ -142,6 +148,15 @@ classdef RailwaySystem < handle
                train = railwaySystem.trains(i);
                lateness = lateness + train.getNodeArrivalTime() - train.getIdealTime();
            end
-       end      
+       end     
+       
+       function [solution, lateness] = genSolutionWithDelay(railwaySystem, delay)
+           [m, nNodes] = size(railwaySystem.nodes);
+           for i = 1:nNodes
+               railwaySystem.nodes(i).setDelay(delay(:,i));
+           end
+           
+           [solution, lateness] = railwaySystem.getSolution();
+       end
    end
 end

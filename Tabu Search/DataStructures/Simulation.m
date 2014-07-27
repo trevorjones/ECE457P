@@ -39,7 +39,21 @@ train3 = rs.createTrain(3, station2, station1, LEFT);
 
 % Simulate
 IdealSolution = rs.genIdealSolution()
+
 rs.reset();
-[InitialSolution, lateness] = rs.getInitialSolution();
+[InitialSolution, lateness] = rs.getSolution();
 InitialSolution
+lateness
+
+rs.reset();
+%% Swap
+%  Done with delays. Ex: if train 1, 2, and 3 need to use the track between
+%  nodes 3 and 4, and you want train 3 to go, then 2, then 1, you must send
+%  the following array to delay train 1 by 2 at station 3, and 1 for train
+%  2 to be delayed by 1 at station 4
+delay = [0, 0, 0, 0, 0, 0, 0;
+         0, 0, 0, 1, 0, 0, 0;
+         0, 0, 0, 2, 0, 0, 0];
+[solution, lateness] = rs.genSolutionWithDelay(delay);
+solution
 lateness

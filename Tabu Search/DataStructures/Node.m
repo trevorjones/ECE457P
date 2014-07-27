@@ -7,6 +7,7 @@ classdef Node < handle
         id;
         leftTrackSegments = [];
         rightTrackSegments = [];
+        delay = [];
         LEFT = 0;
         RIGHT = 1;
         STATION = 0;
@@ -27,6 +28,7 @@ classdef Node < handle
         end
         
         function reset(node)
+            node.delay = [];
             [n, mTS] = size(node.rightTrackSegments);
             for i = 1:mTS
                 ts = node.rightTrackSegments(i);
@@ -65,12 +67,32 @@ classdef Node < handle
             if (ideal == 0 && time < ts.getBusyUntil())
                 time = ts.getBusyUntil();
             end
-            
+                       
             time = ts.assignTrain(time);
             node2 = ts.getNode(direction);
-            
+                       
             % Move to next node
             train.setCurrentNode(node2, time);
+        end
+        
+        function setDelay(node, delay)
+            node.delay = delay;
+        end
+        
+        function time = getTrainDelay(node, train)
+           time = 0;
+           trainId = train.getId();
+           [m,n] = size(node.delay);
+           
+           if (m > 0)
+               d = node.delay(trainId);
+
+               % Check for a delay
+               if (d > 0)
+                   time = d;
+                   node.delay(trainId) = 0;
+               end
+           end
         end
     end
     
