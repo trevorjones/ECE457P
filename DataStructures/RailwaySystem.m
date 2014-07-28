@@ -24,6 +24,10 @@ classdef RailwaySystem < handle
           railwaySystem.nodes = [railwaySystem.nodes, node];
        end
        
+       function nTrains = getNumTrains(rs)
+           [n, nTrains] = size(rs.trains);
+       end
+       
        function addTrackSegment(railwaySystem, leftNodeId, rightNodeId, trackSegmentLength)
            leftNode = railwaySystem.nodes(leftNodeId);
            rightNode = railwaySystem.nodes(rightNodeId);

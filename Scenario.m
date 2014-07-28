@@ -38,9 +38,15 @@ classdef Scenario < handle
       scenario.rs.addTrackSegment(junction4, station3, 1);
 
       % Add trains
-      scenario.rs.createTrain(1, station1, station3, RIGHT);
-      scenario.rs.createTrain(3, station2, station1, LEFT);
-      scenario.rs.createTrain(3, station2, station1, LEFT);
+      scenario.rs.createTrain(1, station3, station2, LEFT);
+      scenario.rs.createTrain(1, station3, station2, LEFT);
+      scenario.rs.createTrain(1, station3, station2, LEFT);
+      scenario.rs.createTrain(1, station3, station1, LEFT);
+      
+      scenario.rs.createTrain(5, station1, station2, RIGHT);
+      scenario.rs.createTrain(5, station1, station2, RIGHT);
+      scenario.rs.createTrain(5, station1, station2, RIGHT);
+      scenario.rs.createTrain(5, station1, station2, RIGHT);
     end
     
     function rs = getRS(scenario)

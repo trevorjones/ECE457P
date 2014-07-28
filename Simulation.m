@@ -1,7 +1,7 @@
 %% Simulation
 %  Following the Figure 9.1 from http://www.eecs.harvard.edu/~parkes/pubs/ch9.pdf
 clearvars
-sc = SimplifiedScenario();
+sc = Scenario();
 rs = sc.getRS();
 
 % Simulate
