@@ -39,7 +39,8 @@ rs.reset();
 
 disp('------------------- Set Up Completed --------------------')
 
-T = 50;
+T = nTrains;
+coolingRate = 0.1;
 while(T > 0)
     newDelay = curDelay;
     
@@ -76,7 +77,7 @@ while(T > 0)
     end
     
     rs.reset();
-    T = T - 1;
+    T = T * (1 - coolingRate);
 end
 
 disp(' ')
