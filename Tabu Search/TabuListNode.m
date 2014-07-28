@@ -9,7 +9,8 @@ classdef TabuListNode < handle
     methods
         function tln = TabuListNode(delay, tabuLength)
            if nargin > 0
-              tlln.train = train;
+              tln.delay = delay;
+              tln.tabuLength = tabuLength;
            end
         end
         

@@ -7,12 +7,12 @@ classdef TabuList < handle
    end
    
    methods
-       function tll = TrainLinkedList()
-           tll.size = 0;
+       function tl = TrainLinkedList()
+           tl.size = 0;
        end
        
-       function insert(delay, tabuLength)
-           tln = TabuListNode(delay, tabuLength);
+       function insert(tl, delay, tabuLength)
+           tln = TabuListNode(delay, tabuLength+1);
            
            if (isempty(tl.head))
               tl.head = tln;
@@ -53,10 +53,12 @@ classdef TabuList < handle
           curNode = tl.head;
           
           while (~isempty(curNode))
-            if (curNode.delay == delay)
+            if (curNode.getDelay() == delay)
               doesExist = 1;
               return;
             end
+            
+            curNode = curNode.getNext();
           end
        end
    end
