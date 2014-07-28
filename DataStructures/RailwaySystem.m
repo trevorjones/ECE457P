@@ -99,6 +99,8 @@ classdef RailwaySystem < handle
            % Reset all trains to initial station and time
            [m, nTrains] = size(railwaySystem.trains);
            railwaySystem.timeOrderedTrains = TrainLinkedList();
+           [n, nNodes] = size(railwaySystem.nodes);
+           railwaySystem.conflicts = zeros(nTrains, nNodes);
            
            for i = 1:nTrains
                train = railwaySystem.trains(i);
