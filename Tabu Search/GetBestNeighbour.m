@@ -1,29 +1,36 @@
-function [BestSoln, BestSolnConflicts, BestSolnCost, TabuList] = GetBestNeighbour(rs, BestSoln, BestSolnCost, BestSolnConflicts, TabuLength, TabuList)
+function [BestSoln, BestSolnConflicts, BestSolnCost, TabuList] = GetBestNeighbour(rs, soln, conflicts, TabuLength, TabuList)
 
 % Get the index of the conflicts
-[nTrains,nNodes] = size(BestSoln);
-indexes = find(BestSolnConflicts);
+[nTrains,nNodes] = size(soln);
+indexes = find(conflicts);
 [numIndexes, z] = size(indexes);
-numLoops = numIndexes * nTrains;
 delay = zeros(nTrains, nNodes);
 
-for i = 1:numLoops
-    delay(indexes(1)) = delay(indexes(1))+1;
-    
-    for j = 2:nTrains
-        if delay(indexes(j-1)) == nTrains
-            delay(indexes(j)) = delay(indexes(j))+1;
-            delay(indexes(j-1)) = 0;
-        end
-    end
-    
-    rs.reset();
-    [soln, conflicts, lateness] = rs.genSolutionWithDelay(delay);
-    
-    if lateness < BestSolnCost % Change this to find current best not overall best
-        TabuList.insert(delay, TabuLength);
-        BestSoln = soln;
-        BestSolnConflicts = conflicts;
-        BestSolnCost = lateness;
+BestSoln = delay;
+BestSolnConflicts = delay;
+BestSolnCost = Inf;
+BestDelay = delay;
+
+% Find best solution in neighborhood
+for j = 1:(nTrains-1)
+    for i = 1:numIndexes
+         delay = zeros(nTrains, nNodes);
+         delay(indexes(i)) = j;
+        
+         rs.reset();
+         [soln, conflicts, lateness] = rs.genSolutionWithDelay(delay);
+         existsInTabuList = TabuList.checkIfExist(delay);
+
+         if ((lateness < BestSolnCost && existsInTabuList == 0))
+             BestSoln = soln;
+             BestSolnConflicts = conflicts;
+             BestSolnCost = lateness;
+             BestDelay = delay;
+         end
     end
 end
+
+TabuList.insert(BestDelay, TabuLength);
+disp('------------------------ Round ------------------------')
+BestDelay
+BestSolnCost
