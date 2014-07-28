@@ -39,7 +39,7 @@ rs.reset();
 
 disp('------------------- Set Up Completed --------------------')
 
-T = 100;
+T = 50;
 while(T > 0)
     newDelay = curDelay;
     
@@ -69,6 +69,10 @@ while(T > 0)
            bestSolution = curSolution;
            bestDelay = curDelay;
         end
+    else    
+        disp('Converged')
+        T
+        T = 0;
     end
     
     rs.reset();
