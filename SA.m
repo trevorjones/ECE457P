@@ -46,47 +46,55 @@ disp('------------------------ Set Up Completed ------------------------')
 
 T = 10;
 while(T > 0)
-    disp('------------------------ ------------ ------------------------')
-    T
+    disp('-------------------------- Start Iteration --------------------------')
+    T %print
     newDelay = curDelay;
-
-    curConflicts
     
     cons = find(curConflicts);
-    rCon = cons(randi([1,length(cons)]));
-    newDelay(rCon) = newDelay(rCon) + 1
-    
-    [newSolution, newConflicts, newLateness] = rs.genSolutionWithDelay(newDelay);
-    newConflicts
-    
-    if (newLateness < bestLateness)
-        accProb = 1;
+    if(length(cons > 0))
+        curConflicts %print
+        rCon = cons(randi([1,length(cons)]));
+        newDelay(rCon) = newDelay(rCon) + 1 %print
+
+        [newSolution, newConflicts, newLateness] = rs.genSolutionWithDelay(newDelay);
+        newSolution %print
+        newConflicts %print
+
+        if (newLateness < bestLateness)
+            accProb = 1;
+        else
+            accProb = exp((curLateness - newLateness)/T);
+        end
+        accRand = randi([0,10000])/10000;
+
+        if (accProb > accRand)
+           disp('Accepted!') %print
+           accProb % print
+           accRand % print
+           curLateness = newLateness;
+           curConflicts = newConflicts;
+           curSolution = newSolution;
+           curDelay = newDelay;
+        else
+            disp('Declined! What now bitch? S my d') % print
+        end
+        if (curLateness < bestLateness)
+           disp('BESTIES!!!!') % print
+           bestLateness = curLateness;
+           bestConflicts = curConflicts;
+           bestSolution = curSolution;
+           bestDelay = curDelay;
+        end
     else
-        accProb = exp((curLateness - newLateness)/T);
-    end
-    accRand = randi([0,10000])/10000;
-    
-    if (accProb > accRand)
-       disp('Accepted!')
-       accProb
-       accRand
-       curLateness = newLateness;
-       curConflicts = newConflicts;
-       curSolution = newSolution;
-       curDelay = newDelay;
-    end
-    if (curLateness < bestLateness)
-       disp('BESTIES!!!!')
-       bestLateness = curLateness;
-       bestConflicts = curConflicts;
-       bestSolution = curSolution;
-       bestDelay = curDelay;
+        disp('Money!') % print
     end
     
     rs.reset();
     T = T - 1;
+    disp('-------------------------- Finish Iteration -------------------------')
 end
 
+disp(' ')
 disp('------------------------ Results ------------------------')
 bestDelay
 bestLateness
