@@ -16,7 +16,7 @@ disp('------------------------ Running SA ------------------------')
 
 clearvars
 % sc = Scenario();
-sc = RandomTrains(20,15,3);
+sc = RandomTrains(25,15,4);
 rs = sc.getRS();
 
 % Calculate ideal
