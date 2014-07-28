@@ -1,5 +1,25 @@
 %% SA
 %  Following the Figure 9.1 from http://www.eecs.harvard.edu/~parkes/pubs/ch9.pdf
+
+disp(' ')
+disp('------------------------------------------------------------')
+disp('   ------------------------------------------------------   ')
+disp('------------------------------------------------------------')
+disp('   ------------------------------------------------------   ')
+disp('------------------------------------------------------------')
+disp('   ------------------------------------------------------   ')
+disp('------------------------------------------------------------')
+disp('   ------------------------------------------------------   ')
+disp('------------------------------------------------------------')
+disp('   ------------------------------------------------------   ')
+disp('------------------------------------------------------------')
+disp('   ------------------------------------------------------   ')
+disp('------------------------------------------------------------')
+disp('   ------------------------------------------------------   ')
+disp('------------------------------------------------------------')
+disp('   ------------------------------------------------------   ')
+disp('------------------------ Running SA ------------------------')
+
 clearvars
 sc = Scenario();
 rs = sc.getRS();
@@ -22,32 +42,41 @@ bestLateness = curLateness;
 bestDelay = curDelay;
 rs.reset();
 
-T = 100;
+disp('------------------------ Set Up Completed ------------------------')
+
+T = 10;
 while(T > 0)
+    disp('------------------------ ------------ ------------------------')
+    T
     newDelay = curDelay;
 
-    rTrain = randi([1,nTrains]);
-    rNode = randi([1,nNodes]);
-    newDelay(rTrain,rNode) = curDelay(rTrain,rNode) + 1;
+    curConflicts
+    
+    cons = find(curConflicts);
+    rCon = cons(randi([1,length(cons)]));
+    newDelay(rCon) = newDelay(rCon) + 1
     
     [newSolution, newConflicts, newLateness] = rs.genSolutionWithDelay(newDelay);
-    newLateness;
-    curLateness;
-    bestLateness;
+    newConflicts
     
     if (newLateness < bestLateness)
         accProb = 1;
     else
         accProb = exp((curLateness - newLateness)/T);
     end
-    if (accProb > randi([0,10000])/10000)
-       T;
+    accRand = randi([0,10000])/10000;
+    
+    if (accProb > accRand)
+       disp('Accepted!')
+       accProb
+       accRand
        curLateness = newLateness;
        curConflicts = newConflicts;
        curSolution = newSolution;
        curDelay = newDelay;
     end
     if (curLateness < bestLateness)
+       disp('BESTIES!!!!')
        bestLateness = curLateness;
        bestConflicts = curConflicts;
        bestSolution = curSolution;
@@ -58,7 +87,9 @@ while(T > 0)
     T = T - 1;
 end
 
+disp('------------------------ Results ------------------------')
 bestDelay
 bestLateness
+disp('-------------------------- End --------------------------')
 
 clear JUNCTION LEFT RIGHT STATION junction1 junction2 junction3 junction4 station1 station2 station3 train1 train2 train3
