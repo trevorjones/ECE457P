@@ -1,5 +1,5 @@
 function  [BestSoln BestSolnCost] = PSO(...
-    NumParticles, MaxIterations)
+    NumParticles, MaxIterations,sc)
 
 % This function implements the PSO algorithm.
 %
@@ -22,7 +22,8 @@ disp(' ')
 disp('------------------------ Running PSO ------------------------')
 
 
-sc = Scenario();
+% sc = Scenario();
+%sc = RandomTrains(25,15,3);
 rs = sc.getRS();
 
 
@@ -89,12 +90,12 @@ while N < MaxIterations
              else 
                  delay = particles(1,i).getVelocity;
              end
-%             if(delay == 0)
-%                  conflicts = particles(1,i).getConflicts;
-%                  cons = find(conflicts);
-%                  rCon = cons(randi([1,length(cons)]));
-%                  delay(rCon) = delay(rCon)+1;
-%              end
+            if(delay == 0)
+                 conflicts = particles(1,i).getConflicts;
+                 cons = find(conflicts);
+                 rCon = cons(randi([1,length(cons)]));
+                 delay(rCon) = delay(rCon)+1;
+             end
          end
          
 %          if(~isempty(particles(1,i).getVelocity))
@@ -108,7 +109,7 @@ while N < MaxIterations
 %          end
          rs.reset;
          [solution, conflicts, lateness] = rs.genSolutionWithDelay(abs(delay));
-         particles(1,i) = Particle(solution, conflicts, lateness,delay,particles(1,i).getPbest,particles(1,i).getVelocity);
+         particles(1,i) = Particle(solution, conflicts, lateness,abs(delay),particles(1,i).getPbest,particles(1,i).getVelocity);
          %         x[t+1] = x[t] + v[t+1]
     end
     N= N+1;
