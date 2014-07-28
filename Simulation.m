@@ -19,9 +19,9 @@ rs.reset();
 %  nodes 3 and 4, and you want train 3 to go, then 2, then 1, you must send
 %  the following array to delay train 1 by 2 at station 3, and 1 for train
 %  2 to be delayed by 1 at station 4
-delay = [0, 1, 0, 0;
+delay = [0, 0, 1, 0;
          0, 0, 0, 0;
-         0, 0, 0, 1];
+         0, 0, 0, 2];
 [solution, conflicts, lateness] = rs.genSolutionWithDelay(delay);
 solution
 conflicts

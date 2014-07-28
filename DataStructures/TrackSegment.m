@@ -54,6 +54,7 @@ classdef TrackSegment < handle
         
         function reset(trackSegment)
             trackSegment.busyUntil = 0;
+            lastTrainToGo = Train.empty;
         end
         
         function train = getLastTrainToGo(ts)
