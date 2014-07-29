@@ -27,6 +27,14 @@ classdef Node < handle
            id = node.id; 
         end
         
+        function numSegs = getNumRightTrackSegs(node)
+            [n, numSegs] = size(node.rightTrackSegments);
+        end
+        
+        function numSegs = getNumLeftTrackSegs(node)
+            [n, numSegs] = size(node.leftTrackSegments);
+        end
+        
         function reset(node)
             node.delay = [];
             [n, mTS] = size(node.rightTrackSegments);
