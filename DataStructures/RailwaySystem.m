@@ -119,63 +119,6 @@ classdef RailwaySystem < handle
            end
        end
        
-       % Parameter: trains = num trains active at current time
-       function [numSolns, solns] = checkConflictsAtTime(rs, trains)
-           numSolns = 0;
-           solns = [];
-           [m, nTrains] = size(trains);
-           [n, nNodes] = size(rs.nodes);
-           trackSegsUsed = zeros(1, nNodes-1);
-           
-           for i = 1:(nTrains-1)
-               for j = (i+1):nTrains
-                   rs.checkIfConflicting(trains(i), trains(j), trackSegsUsed);
-               end
-           end
-       end
-       
-       function [isConflicting, trackSegsUsed] = checkIfConflicting(rs, train1, train2, trackSegsUsed)
-           isConflicting = 0;
-           dir1 = train1.getDirection();
-           dir2 = train2.getDirection();
-           node1 = train1.getCurrentNode();
-           node2 = train2.getCurrentNode();
-           nodeId1 = node1.getId();
-           nodeId2 = node2.getId();
-           
-           % Case 1: Same direction going at the same time
-           if (nodeId1 == nodeId2 && dir1 == dir2)
-               isConflicting = 1;
-               
-           
-           % Case 2: Opposite direction on connected nodes with not enough
-           % free tracks
-           elseif (abs(nodeId1 - nodeId2) == 1)
-%                if (nodeId1 < nodeId2)
-%                
-%                % Train1 going right from left station
-%                if (dir1 == rs.RIGHT && dir2 == rs.LEFT && )
-%                    a
-%                
-%                % Train1 going left from right station
-%                elseif (dir1 == rs.LEFT && dir2 == rs.RIGHT && nodeId1 > nodeId2)
-%                end
-           end
-       end
-       
-       function [solns, costs] = getPartialSolutionByTimeStep(rs, timestep)
-           [m, nTrains] = size(rs.trains);
-           [m, nNodes] = size(rs.nodes);
-           solns = [zeros(nTrains, nNodes)];
-           costs = [];
-           list = railwaySystem.timeOrderedTrains;
-           trainNode = list.getHead();
-           
-           while ~isempty(trainNode)
-               
-           end
-       end
-       
        function [initialSolution, conflicts, lateness] = getSolution(railwaySystem)
            nTrains = railwaySystem.timeOrderedTrains.getSize();
            initialSolution = railwaySystem.genSolutionWithDepartureTimes();
