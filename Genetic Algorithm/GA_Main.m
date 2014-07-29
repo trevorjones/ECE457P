@@ -1,7 +1,7 @@
 %% SA
 %  Following the Figure 9.1 from http://www.eecs.harvard.edu/~parkes/pubs/ch9.pdf
 clearvars
-% sc = Scenario();
+%sc = Scenario();
 sc = RandomTrains(20,15,3);
 rs = sc.getRS();
 
@@ -13,7 +13,7 @@ rs.reset();
 [m, nTrains] = size(rs.trains);
 [n, nNodes] = size(rs.nodes);
 
-P_SIZE = 20;
+P_SIZE = 50;
 FITNESS = zeros(P_SIZE, 1);
 POP = cell(P_SIZE, 1);
 i = 1;
@@ -86,49 +86,10 @@ while range(F2) ~= 0,
            savedValues = zeros(x_point2 - x_point + 1, 2);
            [CHILD1, savedValues] = CreateChild(CHILD1, P1, P2, savedValues, x_point, x_point2, nTrains);
            [CHILD2, savedValues] = CreateChild(CHILD2, P2, P1, savedValues, x_point, x_point2, nTrains);
-          
-           celldisp(CHILD1);
-           celldisp(CHILD2);
         end
         
         j = j + 2;
     end
-    
-    
-%     Crossover 1 Point at Random k
-%     j = 1;
-%     while j <= P_SIZE,
-%       celldisp(NEW_GEN(j))
-%       P1 = NEW_GEN{j};
-%       celldisp(NEW_GEN(j + 1));
-%       P2 = NEW_GEN{j + 1};
-%       
-%       p_x = rand(1);
-%       if (p_x < 0.8)
-%            x_point = randi([1, nTrains]);
-%            CHILD1 = cell(1, nTrains);
-%            CHILD2 = cell(1, nTrains);
-%            celldisp(P1)
-%            for n=1:x_point,
-%               CHILD1{n} = {P1{1}{n}{1}, P1{1}{n}{2}};
-%            end
-%            celldisp(P2)
-%            for n=x_point+1:nTrains,
-%              CHILD1{n} = {P2{1}{n}{1}, P2{1}{n}{2}};
-%            end
-%            celldisp(P1)
-%            for n=1:x_point,
-%               CHILD2{n} = {P2{1}{n}{1}, P2{1}{n}{2}};
-%            end
-%            celldisp(P1)
-%            for n=x_point+1: nTrains,
-%               CHILD2{n} = {P1{1}{n}{1}, P1{1}{n}{2}};
-%            end
-%            NEW_GEN{j} = {CHILD1};
-%            NEW_GEN{j + 1} = {CHILD2};
-%      end
-%       j = j + 2;
-%     end
     
     %Mutation
     j = 1;
@@ -163,13 +124,7 @@ while range(F2) ~= 0,
            chromosome(1) = L{1}{b}{1};
            chromosome(2) = L{1}{b}{2};
            d = IdealSolution(chromosome(1), chromosome(2));
-           if chromosome(2) == 1 && IdealSolution(chromosome(1), 1) ~= 0
-              if d < IdealSolution(chromosome(1), nNodes) || IdealSolution(chromosome(1), nNodes) == 0
-                  curDelay(chromosome(1), chromosome(2)) = max(curDelay(:,chromosome(2))) + 1; 
-              end
-           elseif chromosome(2) == nNodes && IdealSolution(chromosome(1), nNodes) ~= 0
-              curDelay(chromosome(1), chromosome(2)) = max(curDelay(:,chromosome(2))) + 1;
-           end
+           curDelay(chromosome(1), chromosome(2)) = max(curDelay(:,chromosome(2))) + 1;
            b = b + 1;
        end
        curDelay = curDelay - 1;
@@ -182,9 +137,7 @@ while range(F2) ~= 0,
    POP = NEW_GEN;
    i = i + 1; 
 end
-F1
-F2
-i
+
 
 
 
