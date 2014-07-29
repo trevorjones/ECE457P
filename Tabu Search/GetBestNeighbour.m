@@ -13,8 +13,8 @@ BestDelay = delay;
 itrs = 0;
 
 % Find best solution in neighborhood
-for j = 1:(nTrains-1)
-    for i = 1:numIndexes
+for i = 1:numIndexes
+    for j = 1:(nTrains-1)
         itrs = itrs + 1;
          delay = zeros(nTrains, nNodes);
          delay(indexes(i)) = j;

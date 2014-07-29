@@ -151,15 +151,15 @@ classdef RailwaySystem < handle
            % Case 2: Opposite direction on connected nodes with not enough
            % free tracks
            elseif (abs(nodeId1 - nodeId2) == 1)
-               if (nodeId1 < nodeId2)
-               
-               % Train1 going right from left station
-               if (dir1 == rs.RIGHT && dir2 == rs.LEFT && )
-                   a
-               
-               % Train1 going left from right station
-               elseif (dir1 == rs.LEFT && dir2 == rs.RIGHT && nodeId1 > nodeId2)
-               end
+%                if (nodeId1 < nodeId2)
+%                
+%                % Train1 going right from left station
+%                if (dir1 == rs.RIGHT && dir2 == rs.LEFT && )
+%                    a
+%                
+%                % Train1 going left from right station
+%                elseif (dir1 == rs.LEFT && dir2 == rs.RIGHT && nodeId1 > nodeId2)
+%                end
            end
        end
        
