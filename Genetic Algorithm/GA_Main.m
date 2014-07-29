@@ -1,7 +1,8 @@
 %% SA
 %  Following the Figure 9.1 from http://www.eecs.harvard.edu/~parkes/pubs/ch9.pdf
 clearvars
-sc = Scenario();
+% sc = Scenario();
+sc = RandomTrains(20,15,3);
 rs = sc.getRS();
 
 % Calculate ideal
@@ -11,12 +12,6 @@ rs.reset();
 % Create initial solution
 [m, nTrains] = size(rs.trains);
 [n, nNodes] = size(rs.nodes);
-[curSolution, curConflicts, curLateness] = rs.getSolution();
-rs.reset
-
-curSolution
-curConflicts
-curLateness
 
 P_SIZE = 20;
 FITNESS = zeros(P_SIZE, 1);
@@ -76,7 +71,7 @@ while range(F2) ~= 0,
     j = 1;
     while j <= P_SIZE,
         
-        celldisp(NEW_GEN(j))
+        celldisp(NEW_GEN(j));
         P1 = NEW_GEN(j);
         celldisp(NEW_GEN(j+1));
         P2 = NEW_GEN(j+1);
@@ -92,8 +87,8 @@ while range(F2) ~= 0,
            [CHILD1, savedValues] = CreateChild(CHILD1, P1, P2, savedValues, x_point, x_point2, nTrains);
            [CHILD2, savedValues] = CreateChild(CHILD2, P2, P1, savedValues, x_point, x_point2, nTrains);
           
-           celldisp(CHILD1)
-           celldisp(CHILD2)
+           celldisp(CHILD1);
+           celldisp(CHILD2);
         end
         
         j = j + 2;
@@ -142,7 +137,7 @@ while range(F2) ~= 0,
         if p_mut < 0.1
             celldisp(NEW_GEN(j));
             L = NEW_GEN{j};
-            celldisp(L)
+            celldisp(L);
             k1 = randi([1,nTrains]);
             k2 = randi([1,nTrains]);
             while k2 == k1,
