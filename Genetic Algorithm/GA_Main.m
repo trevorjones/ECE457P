@@ -1,19 +1,21 @@
-%% SA
 %  Following the Figure 9.1 from http://www.eecs.harvard.edu/~parkes/pubs/ch9.pdf
-clearvars
+function  [numIts, BestSoln BestSolnCost] = GA_Main(sc,iLateness)
+
+% clearvars
 % sc = Scenario();
-sc = RandomTrains(20,15,3);
+% sc = RandomTrains(20,15,3);
 rs = sc.getRS();
 
 % Calculate ideal
-IdealSolution = rs.genIdealSolution()
+IdealSolution = rs.genIdealSolution();
 rs.reset();
 
 % Create initial solution
 [m, nTrains] = size(rs.trains);
 [n, nNodes] = size(rs.nodes);
 
-P_SIZE = 20;
+numIts = 0;
+P_SIZE = 50;
 FITNESS = zeros(P_SIZE, 1);
 POP = cell(P_SIZE, 1);
 i = 1;
@@ -34,6 +36,7 @@ while i <= P_SIZE,
         L_CHROM{j} = {train, startNode};
         j = j + 1;
         excludes = [excludes train];
+        numIts = numIts + 1;
     end
     curDelay = curDelay - 1;
     [newSolution, newConflicts, newLateness] = rs.genSolutionWithDelay(curDelay);
@@ -64,6 +67,7 @@ while range(F2) ~= 0,
             NEW_GEN{j} = POP{challenger2};
         end
         j = j + 1;
+        numIts = numIts + 1;
     end
     
     
@@ -84,14 +88,15 @@ while range(F2) ~= 0,
            CHILD1 = cell(1, nTrains);
            CHILD2 = cell(1, nTrains);
            savedValues = zeros(x_point2 - x_point + 1, 2);
-           [CHILD1, savedValues] = CreateChild(CHILD1, P1, P2, savedValues, x_point, x_point2, nTrains);
-           [CHILD2, savedValues] = CreateChild(CHILD2, P2, P1, savedValues, x_point, x_point2, nTrains);
+           [CHILD1, savedValues, numIts] = CreateChild(CHILD1, P1, P2, savedValues, x_point, x_point2, nTrains, numIts);
+           [CHILD2, savedValues, numIts] = CreateChild(CHILD2, P2, P1, savedValues, x_point, x_point2, nTrains, numIts);
           
            celldisp(CHILD1);
            celldisp(CHILD2);
         end
         
         j = j + 2;
+        numIts = numIts + 1;
     end
     
     
@@ -134,7 +139,7 @@ while range(F2) ~= 0,
     j = 1;
     while j < P_SIZE
         p_mut = rand(1);
-        if p_mut < 0.1
+        if p_mut < 0.08
             celldisp(NEW_GEN(j));
             L = NEW_GEN{j};
             celldisp(L);
@@ -142,6 +147,7 @@ while range(F2) ~= 0,
             k2 = randi([1,nTrains]);
             while k2 == k1,
                 k2 = randi([1,nTrains]);
+                numIts = numIts + 1;
             end
             temp = L{1}{k1};
             L{1}{k1} = L{1}{k2};
@@ -171,6 +177,7 @@ while range(F2) ~= 0,
               curDelay(chromosome(1), chromosome(2)) = max(curDelay(:,chromosome(2))) + 1;
            end
            b = b + 1;
+           numIts = numIts + 1;
        end
        curDelay = curDelay - 1;
        [newSolution, newConflicts, newLateness] = rs.genSolutionWithDelay(curDelay);
@@ -182,10 +189,10 @@ while range(F2) ~= 0,
    POP = NEW_GEN;
    i = i + 1; 
 end
-F1
-F2
-i
-
-
+BestSoln = min(FITNESS);
+BestSolnCost = min(FITNESS);
+if(BestSolnCost > iLateness)
+    BestSolnCost = iLateness;
+end
 
 

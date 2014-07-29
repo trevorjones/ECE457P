@@ -10,4 +10,10 @@ ts_path = fullfile(path, 'Tabu Search');
 if exist(ts_path,'dir')
     addpath(ts_path);
 end
-clear path ds_path ts_path
+
+ga_path = fullfile(path, 'Genetic Algorithm');
+if exist(ga_path,'dir')
+    addpath(ga_path);
+end
+
+clear path ds_path ts_path ga_path

@@ -2,6 +2,7 @@ disp(' ')
 disp(' ')
 disp(' ')
 disp('------------- Running all solutions -------------')
+clearvars
 %% Configure
 numTrains = 10
 latestDep = 7
@@ -15,6 +16,12 @@ rs.reset();
 [initSolution, initConflicts, initLateness] = rs.getSolution();
 initLateness
 disp(' ')
+
+disp('--------------- Genetic Algorithm ----------------')
+rs.reset();
+[GAIts, bestGADelay, bestGACost] = GA_Main(sc, initLateness);
+bestGACost
+GAIts
 
 disp('-------------- Simulated Annealing --------------')
 rs.reset();
@@ -34,11 +41,17 @@ rs.reset();
 bestTSCost
 TSIts
 
-disp('--------------- Genetic Algorithm ----------------')
-rs.reset();
-
 disp('------------ Ant Colony Optimization -------------')
 rs.reset();
 
 disp(' ')
 disp('------------- Finished Running All --------------')
+initLateness
+bestGACost
+bestSACost
+bestPSOCost
+bestTSCost
+GAIts
+SAIts
+PSOIts
+TSIts

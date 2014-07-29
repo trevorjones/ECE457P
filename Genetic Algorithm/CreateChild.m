@@ -1,7 +1,7 @@
-function [ CHILD, savedValues ] = CreateChild( CHILD, P1, P2, savedValues, x_point, x_point2, nTrains )
+function [ CHILD, savedValues, numIts ] = CreateChild( CHILD, P1, P2, savedValues, x_point, x_point2, nTrains, numIts )
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
-           celldisp(P1)    
+           celldisp(P1);    
            index = 1;
            for n=x_point:x_point2,
                 train = P1{1}{1}{n}{1};
@@ -12,7 +12,7 @@ function [ CHILD, savedValues ] = CreateChild( CHILD, P1, P2, savedValues, x_poi
                 index = index + 1;
            end
            
-           celldisp(P2)
+           celldisp(P2);
            n = x_point2 + 1;
            [trainCount c] = size(savedValues);
            while trainCount < 8,
@@ -39,6 +39,7 @@ function [ CHILD, savedValues ] = CreateChild( CHILD, P1, P2, savedValues, x_poi
                   else
                       w = w + 1
                   end
+                  numIts = numIts + 1;
                end
                CHILD{n} = {p21 p22};
                new_val = [p21 p22];
