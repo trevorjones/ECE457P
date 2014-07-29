@@ -1,26 +1,29 @@
+function  [numIts, BestSoln BestSolnCost] = SA(sc)
+
+
 %% SA
 %  Following the Figure 9.1 from http://www.eecs.harvard.edu/~parkes/pubs/ch9.pdf
+% 
+% disp(' ')
+% disp('             ----------------------------------             ')
+% disp('             ----------------------------------             ')
+% disp('             ----------------------------------             ')
+% disp('             ----------------------------------             ')
+% disp('             ----------------------------------             ')
+% disp('             ----------------------------------             ')
+% disp('             ----------------------------------             ')
+% disp('             ----------------------------------             ')
+% disp('             ----------------------------------             ')
+% disp(' ')
+% disp('------------------------ Running SA ------------------------')
 
-disp(' ')
-disp('             ----------------------------------             ')
-disp('             ----------------------------------             ')
-disp('             ----------------------------------             ')
-disp('             ----------------------------------             ')
-disp('             ----------------------------------             ')
-disp('             ----------------------------------             ')
-disp('             ----------------------------------             ')
-disp('             ----------------------------------             ')
-disp('             ----------------------------------             ')
-disp(' ')
-disp('------------------------ Running SA ------------------------')
-
-clearvars
+%clearvars
 % sc = Scenario();
-sc = RandomTrains(25,15,4);
+% sc = RandomTrains(35,20,4);
 rs = sc.getRS();
 
 % Calculate ideal
-IdealSolution = rs.genIdealSolution()
+IdealSolution = rs.genIdealSolution();
 rs.reset();
 
 % Create initial solution
@@ -28,20 +31,21 @@ rs.reset();
 [n, nNodes] = size(rs.nodes);
 [curSolution, curConflicts, curLateness] = rs.getSolution();
 curDelay = zeros(nTrains, nNodes);
-curSolution
-curConflicts
-initialLateness = curLateness
+curSolution;
+curConflicts;
+initialLateness = curLateness;
 bestSolution = curSolution;
 bestConflicts = curConflicts;
 bestLateness = curLateness;
 bestDelay = curDelay;
 rs.reset();
-
-disp('------------------- Set Up Completed --------------------')
+numIts = 0;
+% disp('------------------- Set Up Completed --------------------')
 
 T = nTrains;
 coolingRate = 0.1;
 while(T > 0)
+    numIts = numIts + 1;
     newDelay = curDelay;
     
     cons = find(curConflicts);
@@ -71,8 +75,8 @@ while(T > 0)
            bestDelay = curDelay;
         end
     else    
-        disp('Converged')
-        T
+%         disp('Converged')
+%         T
         T = 0;
     end
     
@@ -80,13 +84,16 @@ while(T > 0)
     T = T * (1 - coolingRate);
 end
 
-disp(' ')
-disp('------------------------ Results ------------------------')
-bestSolution
-bestDelay
-bestLateness
-initialLateness
-optimizationPercent = ((initialLateness / bestLateness) - 1) * 100
-disp('-------------------------- End --------------------------')
+BestSoln = bestDelay;
+BestSolnCost = bestLateness;
+
+% disp(' ')
+% disp('------------------------ Results ------------------------')
+bestSolution;
+bestDelay;
+bestLateness;
+initialLateness;
+optimizationPercent = ((initialLateness / bestLateness) - 1) * 100;
+% disp('-------------------------- End --------------------------')
 
 clear JUNCTION LEFT RIGHT STATION junction1 junction2 junction3 junction4 station1 station2 station3 train1 train2 train3

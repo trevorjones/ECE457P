@@ -1,4 +1,4 @@
-function [BestSoln, BestSolnConflicts, BestSolnCost, TabuList] = GetBestNeighbour(rs, soln, conflicts, TabuLength, TabuList)
+function [BestSoln, BestSolnConflicts, BestSolnCost, TabuList, itrs] = GetBestNeighbour(rs, soln, conflicts, TabuLength, TabuList)
 
 % Get the index of the conflicts
 [nTrains,nNodes] = size(soln);
@@ -10,10 +10,12 @@ BestSoln = delay;
 BestSolnConflicts = delay;
 BestSolnCost = Inf;
 BestDelay = delay;
+itrs = 0;
 
 % Find best solution in neighborhood
 for j = 1:(nTrains-1)
     for i = 1:numIndexes
+        itrs = itrs + 1;
          delay = zeros(nTrains, nNodes);
          delay(indexes(i)) = j;
         
@@ -31,6 +33,6 @@ for j = 1:(nTrains-1)
 end
 
 TabuList.insert(BestDelay, TabuLength);
-disp('------------------------ Round ------------------------')
-BestDelay
-BestSolnCost
+% disp('------------------------ Round ------------------------')
+BestDelay;
+BestSolnCost;

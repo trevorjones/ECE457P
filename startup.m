@@ -6,4 +6,8 @@ if exist(ds_path,'dir')
     addpath(ds_path);
 end
 
-clear path ds_path
+ts_path = fullfile(path, 'Tabu Search');
+if exist(ts_path,'dir')
+    addpath(ts_path);
+end
+clear path ds_path ts_path
