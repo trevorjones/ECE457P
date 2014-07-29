@@ -1,4 +1,4 @@
-function  [BestSoln BestSolnCost] = SA(sc)
+function  [numIts, BestSoln BestSolnCost] = SA(sc)
 
 
 %% SA
@@ -39,12 +39,13 @@ bestConflicts = curConflicts;
 bestLateness = curLateness;
 bestDelay = curDelay;
 rs.reset();
-
+numIts = 0;
 % disp('------------------- Set Up Completed --------------------')
 
 T = nTrains;
 coolingRate = 0.1;
 while(T > 0)
+    numIts = numIts + 1;
     newDelay = curDelay;
     
     cons = find(curConflicts);

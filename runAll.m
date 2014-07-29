@@ -18,16 +18,21 @@ disp(' ')
 
 disp('-------------- Simulated Annealing --------------')
 rs.reset();
-[bestSADelay, bestSACost] = SA(sc);
+[SAIts, bestSADelay, bestSACost] = SA(sc);
 bestSACost
+SAIts
 
 disp('---------- Particle Swarm Optimization ----------')
 rs.reset();
-% [bestPSODelay, bestPSOCost] = PSO(10,5,sc);
-% bestPOSCost
+[PSOIts, bestPSODelay, bestPSOCost] = PSO(10,15,sc);
+bestPSOCost
+PSOIts
 
 disp('------------------ Tabu Search ------------------')
 rs.reset();
+[TSIts, BestTSSoln, bestTSCost] = TabuSearch(sc, 5, 10);
+bestTSCost
+TSIts
 
 disp('--------------- Genetic Algorithm ----------------')
 rs.reset();
@@ -35,4 +40,5 @@ rs.reset();
 disp('------------ Ant Colony Optimization -------------')
 rs.reset();
 
+disp(' ')
 disp('------------- Finished Running All --------------')
