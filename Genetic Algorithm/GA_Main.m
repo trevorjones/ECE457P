@@ -1,5 +1,5 @@
 %  Following the Figure 9.1 from http://www.eecs.harvard.edu/~parkes/pubs/ch9.pdf
-function  [numIts, BestSoln BestSolnCost] = GA_Main(sc,iLateness)
+function  [numIts, BestSoln BestSolnCost] = GA_Main(sc, P_SIZE, iLateness)
 
 rs = sc.getRS();
 
@@ -12,7 +12,6 @@ rs.reset();
 [n, nNodes] = size(rs.nodes);
 
 numIts = 0;
-P_SIZE = 50;
 FITNESS = zeros(P_SIZE, 1);
 POP = cell(P_SIZE, 1);
 i = 1;

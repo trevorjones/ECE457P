@@ -1,4 +1,4 @@
-function  [numIts, BestSoln BestSolnCost] = SA(sc)
+function  [numIts, BestSoln BestSolnCost] = SA(sc, temp)
 
 
 %% SA
@@ -42,7 +42,7 @@ rs.reset();
 numIts = 0;
 % disp('------------------- Set Up Completed --------------------')
 
-T = nTrains;
+T = nTrains*temp;
 coolingRate = 0.1;
 while(T > 0)
     numIts = numIts + 1;
