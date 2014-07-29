@@ -89,22 +89,22 @@ PSOIts3
 disp('------------------ Tabu Search ------------------')
 
 rs.reset();
-TSlength1 = 5;
-[TSIts1, BestTSSoln1, bestTSCost1] = TabuSearch(sc, TSlength1, 15);
+TSlength1 = 3;
+[TSIts1, BestTSSoln1, bestTSCost1] = TabuSearch(sc, TSlength1, 10);
 TSlength1
 bestTSCost1
 TSIts1
 
 rs.reset();
-TSlength2 = 10;
-[TSIts2, BestTSSoln2, bestTSCost2] = TabuSearch(sc, TSlength2, 15);
+TSlength2 = 5;
+[TSIts2, BestTSSoln2, bestTSCost2] = TabuSearch(sc, TSlength2, 10);
 TSlength2
 bestTSCost2
 TSIts2
 
 rs.reset();
-TSlength3 = 15;
-[TSIts3, BestTSSoln3, bestTSCost3] = TabuSearch(sc, TSlength3, 15);
+TSlength3 = 8;
+[TSIts3, BestTSSoln3, bestTSCost3] = TabuSearch(sc, TSlength3, 10);
 TSlength3
 bestTSCost3
 TSIts3
