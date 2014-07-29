@@ -20,7 +20,7 @@ disp(' ')
 disp('--------------- Genetic Algorithm ----------------')
 
 rs.reset();
-GApopulation1 = 50;
+GApopulation1 = 10;
 [GAIts1, bestGADelay1, bestGACost1] = GA_Main(sc, GApopulation1, initLateness);
 GApopulation1
 bestGACost1
@@ -34,7 +34,7 @@ bestGACost2
 GAIts2
 
 rs.reset();
-GApopulation3 = 10;
+GApopulation3 = 50;
 [GAIts3, bestGADelay3, bestGACost3] = GA_Main(sc, GApopulation3, initLateness);
 GApopulation3
 bestGACost3
@@ -160,3 +160,10 @@ TSIts2
 TSlength3
 bestTSCost3
 TSIts3
+
+disp('CSV Matrix')
+m = [GApopulation1 GApopulation2 GApopulation3 SAtemp1 SAtemp2 SAtemp3 PSOparticles1 PSOparticles2 PSOparticles3 TSlength1 TSlength2 TSlength3; ...
+    bestGACost1 bestGACost2 bestGACost3 bestSACost1 bestSACost2 bestSACost3 bestPSOCost1 bestPSOCost2 bestPSOCost3 bestTSCost1 bestTSCost2 bestTSCost3; ...
+    GAIts1 GAIts2 GAIts3 SAIts1 SAIts2 SAIts3 PSOIts1 PSOIts2 PSOIts3 TSIts1 TSIts2 TSIts3]
+csvwrite('tentrains.csv',m)
+type tentrains.csv

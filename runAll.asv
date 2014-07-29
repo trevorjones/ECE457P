@@ -102,14 +102,12 @@ TSlength2
 bestTSCost2
 TSIts2
 
-
-
 rs.reset();
-TSlength1 = 5;
-[TSIts1, BestTSSoln1, bestTSCost1] = TabuSearch(sc, TSlength1, 15);
-TSlength1
-bestTSCost1
-TSIts1
+TSlength3 = 15;
+[TSIts3, BestTSSoln3, bestTSCost3] = TabuSearch(sc, TSlength3, 15);
+TSlength3
+bestTSCost3
+TSIts3
 
 disp('------------ Ant Colony Optimization -------------')
 rs.reset();
@@ -151,3 +149,17 @@ PSOIts2
 PSOparticles3
 bestPSOCost3
 PSOIts3
+
+disp('Tabu Search')
+TSlength1
+bestTSCost1
+TSIts1
+TSlength2
+bestTSCost2
+TSIts2
+TSlength3
+bestTSCost3
+TSIts3
+
+disp('CSV Matrix')
+m = [GApopulation1 GApopulation2 GApopulation3 SAtemp1 SAtemp2 SAtemp3 PSOparticles1 PSOparticles2 PSOparticles3 TSlength1 TSlength2 TSlength3; bestGACost1 bestGACost2 bestGACost3 bestSACost1 bestSACost2 bestSACost3 bestPSOCost1 bestPSOCost2 bestPSOCost3 bestTSCost1 bestTSCost2 bestTSCost3; GAIts1 GAIts2 GAIts3 SAIts1 SAIts2 SAIts3]
