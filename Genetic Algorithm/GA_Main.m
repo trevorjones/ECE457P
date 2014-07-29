@@ -24,42 +24,20 @@ POP = cell(P_SIZE, 1);
 i = 1;
 while i <= P_SIZE,
     excludes = [];
-    L_CHROM = cell(1, nNodes * nTrains);
+    L_CHROM = cell(1, nTrains);
     j = 1;
     curDelay = zeros(nTrains, nNodes);
-    while j <= nNodes*nTrains,
+    while j <= nTrains,
         v = setdiff(1:nTrains, excludes);
         train = v(ceil(numel(v) * rand));
-        d = IdealSolution(train, 1);
-        if d == 0 || (d > IdealSolution(train, nNodes) && IdealSolution(train,nNodes) ~= 0)
-            x = nNodes;
-            while x > 0,
-                %get departure time
-                d = IdealSolution(train, x);
-                if x == nNodes
-                   curDelay;
-                   curDelay(train, x) = max(curDelay(:,x)) + 1; 
-                   
-                end
-                L_CHROM{j} = {train,x};
-                x = x - 1;
-                j = j + 1;
-            end
-        else
-            x = 1;
-            while x <= nNodes,
-                %get departure time
-                d = IdealSolution(train, x);
-                if x == 1
-                   curDelay;
-                   curDelay(train, x) = max(curDelay(:,x)) + 1; 
-                   
-                end
-                 L_CHROM{j} = {train,x};
-                x = x +1;
-                j = j + 1;
-            end
-        end
+        d = IdealSolution(train, 1); %Get Node 1 Value
+        copySol = IdealSolution;
+        copySol(copySol == 0) = Inf;
+        minValue = min(copySol(train,:));
+        startNode = find(IdealSolution(train,:) == minValue);
+        curDelay(train, startNode) = max(curDelay(:,startNode)) + 1;
+        L_CHROM{j} = {train, startNode};
+        j = j + 1;
         excludes = [excludes train];
     end
     curDelay = curDelay - 1;
@@ -71,13 +49,15 @@ while i <= P_SIZE,
 end
 
 F1 = FITNESS;
-newSolution
-newLateness
+%newSolution
+%newLateness
 F1
+%curDelay
 i = 1;
-while range(FITNESS) ~= 0,
-    
-    %Selection
+F2 = FITNESS;
+while range(F2) ~= 0,
+%while i < 2,   
+    %Selection 2 Man Tournament
     j = 1;
     NEW_GEN = cell(P_SIZE, 1);
     while j <= P_SIZE,
@@ -93,95 +73,88 @@ while range(FITNESS) ~= 0,
     
     
     
-%     j = 1;
-%     while j <= P_SIZE,
-%         celldisp(NEW_GEN(j))
-%         P1 = NEW_GEN(j);
-%         P2 = NEW_GEN(j+1);
-%         
-      %{  p_x = rand(1);
-%         if (p_x < 0.8)
-%            x_point = randi([1, nNodes * nTrains]);
-%            x_point2 = randi([x_point, nNodes * nTrains]);
-%            
-%            CHILD1 = cell(1, nNodes * nTrains);
-%            CHILD2 = cell(1, nNodes * nTrains);
-%            
-%            celldisp(P1)
-%            savedValues = zeros(x_point2 - x_point, 2);
-%            index = 1;
-%            for n=x_point:x_point2,
-%                 CHILD1{n} = {P1{1}{n}{1}, P1{1}{n}{2}};
-%                 savedValues(index) = [P1{1}{n}{1} P1{1}{n}{2}];
-%                 index = index + 1;
-%            end
-%            
-%            celldisp(P2)
-%            n = x_point2 + 1;
-%            while n ~= x_point2,
-%                if n > nNodes * nTrains
-%                    n = 1;
-%                end
-%                p11 = P1{1}{n}{1};
-%                p12 = P1{1}{n}{2};
-%                p21 = P2{1}{n}{1};
-%                p22 = P2{1}{n}{2};
-%                found = 0;
-%                for w=1:x_point2 - x_point,
-%                   if savedValues(w,1) == p21 || savedValues(w,2) == p22
-%                       found = 1;
-%                       break
-%                   end
-%                end
-%                if found == 0
-%                   CHILD1{n} = {p21 p22}; 
-%                end
-%                n = n + 1;
-%            end
-%         end
-%         
-%         j = j + 2;
-%     end
-%     
-    
-%     Crossover 1 Point at Random k
     j = 1;
     while j <= P_SIZE,
-      celldisp(NEW_GEN(j))
-      P1 = NEW_GEN{j};
-      celldisp(NEW_GEN(j + 1));
-      P2 = NEW_GEN{j + 1};
-      
-      p_x = rand(1);
-      if (p_x < 0.8)
-           x_point = randi([1, nNodes * nTrains]);
-           CHILD1 = cell(1, nNodes * nTrains);
-           CHILD2 = cell(1, nNodes * nTrains);
-           celldisp(P1)
-           for n=1:x_point,
-              CHILD1{n} = {P1{1}{n}{1}, P1{1}{n}{2}};
-           end
-           celldisp(P2)
-           for n=x_point+1:nNodes * nTrains,
-             CHILD1{n} = {P2{1}{n}{1}, P2{1}{n}{2}};
-           end
-           celldisp(P1)
-           for n=1:x_point,
-              CHILD2{n} = {P2{1}{n}{1}, P2{1}{n}{2}};
-           end
-           celldisp(P1)
-           for n=x_point+1:nNodes * nTrains,
-              CHILD2{n} = {P1{1}{n}{1}, P1{1}{n}{2}};
-           end
-           NEW_GEN{j} = {CHILD1};
-          NEW_GEN{j + 1} = {CHILD2};
-     end
-      j = j + 2;
+        
+        celldisp(NEW_GEN(j))
+        P1 = NEW_GEN(j);
+        celldisp(NEW_GEN(j+1));
+        P2 = NEW_GEN(j+1);
+  
+        p_x = rand(1);
+        if (p_x < 0.8)
+           x_point = randi([1, nTrains]);
+           x_point2 = randi([x_point, nTrains]);
+           
+           CHILD1 = cell(1, nTrains);
+           CHILD2 = cell(1, nTrains);
+           savedValues = zeros(x_point2 - x_point + 1, 2);
+           [CHILD1, savedValues] = CreateChild(CHILD1, P1, P2, savedValues, x_point, x_point2, nTrains);
+           [CHILD2, savedValues] = CreateChild(CHILD2, P2, P1, savedValues, x_point, x_point2, nTrains);
+          
+           celldisp(CHILD1)
+           celldisp(CHILD2)
+        end
+        
+        j = j + 2;
     end
     
-    %Mutation
     
-   
+%     Crossover 1 Point at Random k
+%     j = 1;
+%     while j <= P_SIZE,
+%       celldisp(NEW_GEN(j))
+%       P1 = NEW_GEN{j};
+%       celldisp(NEW_GEN(j + 1));
+%       P2 = NEW_GEN{j + 1};
+%       
+%       p_x = rand(1);
+%       if (p_x < 0.8)
+%            x_point = randi([1, nTrains]);
+%            CHILD1 = cell(1, nTrains);
+%            CHILD2 = cell(1, nTrains);
+%            celldisp(P1)
+%            for n=1:x_point,
+%               CHILD1{n} = {P1{1}{n}{1}, P1{1}{n}{2}};
+%            end
+%            celldisp(P2)
+%            for n=x_point+1:nTrains,
+%              CHILD1{n} = {P2{1}{n}{1}, P2{1}{n}{2}};
+%            end
+%            celldisp(P1)
+%            for n=1:x_point,
+%               CHILD2{n} = {P2{1}{n}{1}, P2{1}{n}{2}};
+%            end
+%            celldisp(P1)
+%            for n=x_point+1: nTrains,
+%               CHILD2{n} = {P1{1}{n}{1}, P1{1}{n}{2}};
+%            end
+%            NEW_GEN{j} = {CHILD1};
+%            NEW_GEN{j + 1} = {CHILD2};
+%      end
+%       j = j + 2;
+%     end
+    
+    %Mutation
+    j = 1;
+    while j < P_SIZE
+        p_mut = rand(1);
+        if p_mut < 0.1
+            celldisp(NEW_GEN(j));
+            L = NEW_GEN{j};
+            celldisp(L)
+            k1 = randi([1,nTrains]);
+            k2 = randi([1,nTrains]);
+            while k2 == k1,
+                k2 = randi([1,nTrains]);
+            end
+            temp = L{1}{k1};
+            L{1}{k1} = L{1}{k2};
+            L{1}{k2} = temp;
+        end
+        j = j + 1;
+    end
+    
     %Evaluate Population
     y = 1;
     while y <= P_SIZE,
@@ -190,7 +163,7 @@ while range(FITNESS) ~= 0,
        b = 1;
        curDelay = zeros(nTrains, nNodes);
        celldisp(L);
-       while b <= nTrains * nNodes,
+       while b <= nTrains,
            chromosome = [0 0];
            chromosome(1) = L{1}{b}{1};
            chromosome(2) = L{1}{b}{2};
@@ -210,12 +183,13 @@ while range(FITNESS) ~= 0,
        y = y + 1;
        rs.reset();
     end
-   FITNESS
+   F2 = FITNESS;
    POP = NEW_GEN;
    i = i + 1; 
 end
-
-F2 = FITNESS;
+F1
+F2
+i
 
 
 
